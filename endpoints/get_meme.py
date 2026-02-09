@@ -1,6 +1,7 @@
 import requests
 import allure
 from .endpoint import Endpoint
+import pytest
 
 
 class GetMeme(Endpoint):
@@ -16,10 +17,15 @@ class GetMeme(Endpoint):
 
     @allure.step('Get all memes')
     def get_all_memes(self):
+        try:
+            headers = {
+                'Authorization': f'{self.token}',
+                'Content-Type': 'application/json'
+            }
+            self.response = requests.get(self.url, headers=headers, timeout=5)
+            return self.response
+        except requests.exceptions.ConnectionError:
+            pytest.fail("Ошибка соединения с сервером")
 
-        headers = {
-            'Authorization': f'{self.token}',
-            'Content-Type': 'application/json'
-        }
-        self.response = requests.get(self.url, headers=headers, timeout=5)
-        return self.response
+        except requests.exceptions.ReadTimeout:
+            pytest.fail("Сервер не ответил за 5 секунд")
