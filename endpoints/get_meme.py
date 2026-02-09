@@ -8,6 +8,7 @@ class GetMeme(Endpoint):
 
     @allure.step('Get a meme')
     def get_meme_by_id(self, meme_id):
+
         headers = {
             'Authorization': f'{self.token}',
             'Content-Type': 'application/json'
@@ -17,6 +18,7 @@ class GetMeme(Endpoint):
 
     @allure.step('Get all memes')
     def get_all_memes(self):
+
         try:
             headers = {
                 'Authorization': f'{self.token}',
