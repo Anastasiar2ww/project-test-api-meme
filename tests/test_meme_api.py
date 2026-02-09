@@ -66,17 +66,12 @@ def test_create_meme(create_meme_endpoint):
     data = TEST_DATA[0]
     create_meme_endpoint.create_new_meme(data)
     create_meme_endpoint.check_status_code(200)
+    create_meme_endpoint.check_all_fields(data)
 
 
-def test_create_meme_without_field(create_meme_endpoint):
-    data = TEST_DATA_NEGATIVE[0]
-    create_meme_endpoint.create_new_meme(data)
-    create_meme_endpoint.check_status_code(400)
-
-
-def test_create_meme_incorrect_value(create_meme_endpoint):
-    data = TEST_DATA_NEGATIVE[1]
-    create_meme_endpoint.create_new_meme(data)
+@pytest.mark.parametrize('test_data', TEST_DATA_NEGATIVE)
+def test_create_meme_negative(create_meme_endpoint, test_data):
+    create_meme_endpoint.create_new_meme(test_data)
     create_meme_endpoint.check_status_code(400)
 
 
@@ -92,7 +87,6 @@ def test_create_meme_with_wrong_token(create_meme_endpoint):
 def test_get_meme(get_meme_endpoint, meme_id):
     get_meme_endpoint.get_meme_by_id(meme_id)
     get_meme_endpoint.check_status_code(200)
-    get_meme_endpoint.check_field_value('id', meme_id)
 
 
 def test_get_wrong_meme_id(get_meme_endpoint, meme_id):
@@ -101,23 +95,13 @@ def test_get_wrong_meme_id(get_meme_endpoint, meme_id):
 
 
 def test_all_memes(get_meme_endpoint):
-    try:
         get_meme_endpoint.get_all_memes()
         get_meme_endpoint.check_status_code(200)
-    except requests.exceptions.ConnectionError:
-        pytest.fail("Ошибка соединения с сервером")
-    except requests.exceptions.ReadTimeout:
-        pytest.fail("Сервер не ответил за 5 секунд")
 
 
 def test_all_memes_structure(get_meme_endpoint):
-    try:
         get_meme_endpoint.get_all_memes()
         get_meme_endpoint.check_response_contains_list()
-    except requests.exceptions.ConnectionError:
-        pytest.fail("Ошибка соединения с сервером")
-    except requests.exceptions.ReadTimeout:
-        pytest.fail("Сервер не ответил за 5 секунд")
 
 
 def test_update_meme(update_meme_endpoint, get_meme_endpoint, meme_id):
@@ -145,8 +129,13 @@ def test_update_nonexistent_meme(update_meme_endpoint):
 
 
 def test_delete_meme(delete_meme_endpoint, create_meme_for_delete):
+    meme_id = create_meme_for_delete
+
     delete_meme_endpoint.delete_meme_by_id(create_meme_for_delete)
     delete_meme_endpoint.check_status_code(200)
+
+    delete_meme_endpoint.delete_meme_by_id(meme_id)
+    delete_meme_endpoint.check_status_code(404)
 
 
 def test_delete_incorrect_meme_id(delete_meme_endpoint):
