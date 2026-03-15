@@ -1,6 +1,6 @@
 # project-test-api-meme
 
-Это учебный проект, в котором показано, как реализовать тесты API в Python
+Пример реализации API-автотестов на Python + Requests с использованием Pytest
 
 Base URL: http://memesapi.course.qa-practice.com
 
