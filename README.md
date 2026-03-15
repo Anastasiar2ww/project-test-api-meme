@@ -9,6 +9,8 @@ Base URL: http://memesapi.course.qa-practice.com
 
 - Python
 - Requests
+- Pytest
+- Page Object Model (POM)
 - Allure для отчетов
 ---
 
